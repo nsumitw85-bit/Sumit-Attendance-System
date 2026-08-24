@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -33,9 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -54,30 +51,34 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent {
-            val context = LocalContext.current.applicationContext as Application
-            
-            var crashError by remember { mutableStateOf<String?>(null) }
 
-            if (crashError != null) {
-                // जर काही अडचण आली तर क्रॅश न होता स्क्रीनवर एरर दाखवेल
+        val app = applicationContext as Application
+        val viewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(app)
+        )[AttendanceViewModel::class.java]
+
+        setContent {
+            var runtimeError by remember { mutableStateOf<String?>(null) }
+
+            if (runtimeError != null) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color(0xFF1E1E1E))
+                        .background(Color(0xFF121212))
                         .padding(24.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                         Text(
-                            text = "ॲप सुरू करताना अडचण आली:",
-                            color = Color.Red,
+                            text = "ॲप सुरू करताना त्रुटी आली:",
+                            color = Color(0xFFFF5252),
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
-                            text = crashError ?: "",
+                            text = runtimeError ?: "",
                             color = Color.White,
                             fontSize = 13.sp
                         )
@@ -85,14 +86,6 @@ class MainActivity : ComponentActivity() {
                 }
             } else {
                 try {
-                    val viewModel: AttendanceViewModel = viewModel(
-                        factory = object : ViewModelProvider.Factory {
-                            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                                return AttendanceViewModel(context) as T
-                            }
-                        }
-                    )
-
                     val themeSetting by viewModel.appTheme.collectAsState()
                     val customThemeConfig by viewModel.customThemeConfig.collectAsState()
 
@@ -103,7 +96,7 @@ class MainActivity : ComponentActivity() {
                         SumitAttendanceApp(viewModel = viewModel)
                     }
                 } catch (e: Throwable) {
-                    crashError = e.localizedMessage ?: e.stackTraceToString()
+                    runtimeError = e.localizedMessage ?: e.stackTraceToString()
                 }
             }
         }
