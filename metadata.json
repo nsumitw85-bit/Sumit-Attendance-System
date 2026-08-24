@@ -1,0 +1,6 @@
+{
+  "name": "Sumit Attendance System",
+  "description": "Production-ready attendance and automatic salary management system for sanitation workers with daily/monthly PDF reports and WhatsApp sharing.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
