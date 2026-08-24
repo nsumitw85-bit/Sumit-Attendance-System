@@ -38,10 +38,13 @@ jobs:
 
       - name: Build Android APKs
         run: |
-          if [ -x "./gradlew" ]; then
+          if command -v gradle >/dev/null 2>&1; then
+            gradle :app:assembleDebug :app:assembleRelease --stacktrace
+          elif [ -x "./gradlew" ]; then
             ./gradlew :app:assembleDebug :app:assembleRelease --stacktrace
           else
-            gradle :app:assembleDebug :app:assembleRelease --stacktrace
+            chmod +x gradlew
+            ./gradlew :app:assembleDebug :app:assembleRelease --stacktrace
           fi
 
       - name: Upload Debug APK
