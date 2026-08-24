@@ -28,7 +28,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -48,12 +47,15 @@ import com.example.ui.theme.SumitAttendanceTheme
 import com.example.viewmodel.AttendanceViewModel
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var viewModel: AttendanceViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         val app = applicationContext as Application
-        val viewModel = ViewModelProvider(
+        viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(app)
         )[AttendanceViewModel::class.java]
